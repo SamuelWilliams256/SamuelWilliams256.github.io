@@ -1,411 +1,410 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8"/>
+    <head>
+        <meta charset="utf-8"/>
 
-<script>
-var currentTable = "Winner||Loser\n-|-|-";
-var gameNumber = 1;
+        <script>
+            var currentTable = "Winner||Loser\n-|-|-";
+            var gameNumber = 1;
 
-window.onload = function()
-{
-	outputField.value = currentTable;
-	document.getElementById("inputField").size = 25;
-}
+            window.onload = function()
+            {
+                outputField.value = currentTable;
+                document.getElementById("inputField").size = 25;
+            }
 
-function confirmClearTable()
-{
-	if (currentTable == "Winner||Loser\n-|-|-" || currentTable == "Winner||Loser|Comments\n-|-|-|-")
-	{
-		clearTableButtonClicked();
-		return;
-	}
-	
-	if (confirm("Warning. This action will clear your current table."))
-	{
-		clearTableButtonClicked();
-		return;
-	}
+            function confirmClearTable()
+            {
+                if (currentTable == "Winner||Loser\n-|-|-" || currentTable == "Winner||Loser|Comments\n-|-|-|-")
+                {
+                    clearTableButtonClicked();
+                    return;
+                }
 
-	if (document.getElementById("commentCheckbox").checked)
-	{
-		document.getElementById("commentCheckbox").checked = false;
-		return;
-	}
+                if (confirm("Warning. This action will clear your current table."))
+                {
+                    clearTableButtonClicked();
+                    return;
+                }
 
-	document.getElementById("commentCheckbox").checked = true;
-}
+                if (document.getElementById("commentCheckbox").checked)
+                {
+                    document.getElementById("commentCheckbox").checked = false;
+                    return;
+                }
 
-function clearTableButtonClicked()
-{
-	document.getElementById("gameNumber").innerHTML = 1;
-	document.getElementById("winnerOrLoser").innerHTML = "winner";
-	if (document.getElementById("commentCheckbox").checked)
-	{
-		currentTable = "Winner||Loser|Comments\n-|-|-|-";
-	}
-	else
-	{
-		currentTable = "Winner||Loser\n-|-|-";
-	}
-	document.getElementById("outputField").value = currentTable;
-	gameNumber = 1;
-}
+                document.getElementById("commentCheckbox").checked = true;
+            }
 
-function copyOutputField()
-{
-	let finalizedTable = document.getElementById("outputField");
-	finalizedTable.select();
-	document.execCommand("copy");
-	document.getElementById("copyButton").innerHTML = "Copied!";
-	window.getSelection().removeAllRanges();
-	setTimeout(function(){document.getElementById("copyButton").innerHTML = "Copy to Clipboard"}, 3000);
-}
+            function clearTableButtonClicked()
+            {
+                document.getElementById("gameNumber").innerHTML = 1;
+                document.getElementById("winnerOrLoser").innerHTML = "winner";
+                if (document.getElementById("commentCheckbox").checked)
+                {
+                    currentTable = "Winner||Loser|Comments\n-|-|-|-";
+                }
+                else
+                {
+                    currentTable = "Winner||Loser\n-|-|-";
+                }
+                document.getElementById("outputField").value = currentTable;
+                gameNumber = 1;
+            }
 
-function keyPressedInTxtBox()
-{
-	//if key !== {ENTER}
-	if (event.keyCode !== 13)
-	{
-		return;
-	}
-	
-	if (document.getElementById("winnerOrLoser").innerHTML === "comments")
-	{
-		var userComment = document.getElementById("inputField").value;
-		currentTable = currentTable + userComment;
-		gameNumber = gameNumber + 1;
-		
-		document.getElementById("gameNumber").innerHTML = gameNumber;
-		document.getElementById("winnerOrLoser").innerHTML = "winner";
-		document.getElementById("ofOrOn").innerHTML = "of";
-		document.getElementById("outputField").value = currentTable;
-		document.getElementById("inputField").size = 25;
-		
-		//clear input field
-		document.getElementById("inputField").value = "";
-		return;
-	}
+            function copyOutputField()
+            {
+                let finalizedTable = document.getElementById("outputField");
+                finalizedTable.select();
+                document.execCommand("copy");
+                document.getElementById("copyButton").innerHTML = "Copied!";
+                window.getSelection().removeAllRanges();
+                setTimeout(function(){document.getElementById("copyButton").innerHTML = "Copy to Clipboard"}, 3000);
+            }
 
-	var formattedTeamName = getFormattedUsersTeamEntry();
-	if (formattedTeamName === "invalid")
-	{
-		alert("Invalid team name! Enter either the NFL team's name, city, or city abbreviation. It is not case-sensitive.\nE.g.) \"Steelers\", \"Pittsburgh\", or \"PIT\"");
-		return;
-	}
-		
-	if (document.getElementById("winnerOrLoser").innerHTML === "winner")
-	{
-		currentTable = currentTable + "\n" + formattedTeamName + " | over | ";
-		document.getElementById("winnerOrLoser").innerHTML = "loser";
-	}
-	else if (!document.getElementById("commentCheckbox").checked && document.getElementById("winnerOrLoser").innerHTML === "loser")
-	{
-		currentTable = currentTable + formattedTeamName;
-		gameNumber = gameNumber + 1;
-		document.getElementById("gameNumber").innerHTML = gameNumber;
-		document.getElementById("winnerOrLoser").innerHTML = "winner";
-		document.getElementById("outputField").value = currentTable;
-		document.getElementById("inputField").size = 25;
-	}
-	else //if comments are enabled and inner html === loser
-	{
-		currentTable = currentTable + formattedTeamName + " | ";
-		document.getElementById("winnerOrLoser").innerHTML = "comments";
-		document.getElementById("inputField").size = 80;
-		document.getElementById("ofOrOn").innerHTML = "on";
-	}
-	//clear input field
-	document.getElementById("inputField").value = "";
-}
+            function keyPressedInTxtBox()
+            {
+                //if key !== {ENTER}
+                if (event.keyCode !== 13)
+                {
+                    return;
+                }
 
+                if (document.getElementById("winnerOrLoser").innerHTML === "comments")
+                {
+                    var userComment = document.getElementById("inputField").value;
+                    currentTable = currentTable + userComment;
+                    gameNumber = gameNumber + 1;
 
-function getFormattedUsersTeamEntry() 
-{
-	var userEntry = document.getElementById("inputField").value;
-	userEntry = userEntry.toLowerCase();
-	
-	//---------------------------AFC---------------------------
-	
-	//AFC North
-	if (userEntry === "pit" 
-	|| userEntry === "pittsburgh"
-	|| userEntry === "steelers")
-	{
-		userEntry = "[](/PIT) Steelers";
-	}
-	else if (userEntry === "bal"
-	|| userEntry === "baltimore"
-	|| userEntry === "ravens")
-	{
-		userEntry = "[](/BAL) Ravens";
-	}
-	else if (userEntry === "cle"
-	|| userEntry === "cleveland"
-	|| userEntry === "browns")
-	{
-		userEntry = "[](/CLE) Browns";
-	}
-	else if (userEntry === "cin"
-	|| userEntry === "cincinnati"
-	|| userEntry === "bengals")
-	{
-		userEntry = "[](/CIN) Bengals";
-	}
-	
-	//AFC East
-	else if (userEntry === "ne"
-	|| userEntry === "new england"
-	|| userEntry === "patriots")
-	{
-		userEntry = "[](/NE) Patriots";
-	}
-	else if (userEntry === "mia"
-	|| userEntry === "miami"
-	|| userEntry === "dolphins")
-	{
-		userEntry = "[](/MIA) Dolphins";
-	}
-	else if (userEntry === "nyj"
-	|| userEntry=== "new york jets"
-	|| userEntry=== "jets")
-	{
-		userEntry = "[](/NYJ) Jets";
-	}
-	else if (userEntry === "buf"
-	|| userEntry === "buffalo"
-	|| userEntry === "bills")
-	{
-		userEntry = "[](/BUF) Bills";
-	}
-	
-	//AFC South
-	else if (userEntry === "hou"
-	|| userEntry === "houston"
-	|| userEntry === "texans")
-	{
-		userEntry = "[](/HOU) Texans";
-	}
-	else if (userEntry === "ten"
-	|| userEntry === "tennessee"
-	|| userEntry === "titans")
-	{
-		userEntry = "[](/TEN) Titans";
-	}
-	else if (userEntry === "jax"
-	|| userEntry === "jacksonville"
-	|| userEntry === "jaguars")
-	{
-		userEntry = "[](/JAX) Jaguars";
-	}
-	else if (userEntry === "ind"
-	|| userEntry === "indianapolis"
-	|| userEntry === "colts")
-	{
-		userEntry = "[](/IND) Colts";
-	}
-	
-	//AFC West
-	else if (userEntry === "kc"
-	|| userEntry === "kansas city"
-	|| userEntry === "chiefs")
-	{
-		userEntry = "[](/KC) Chiefs";
-	}
-	else if (userEntry === "oak"
-	|| userEntry === "oakland"
-	|| userEntry === "lv"
-	|| userEntry === "las vegas"
-	|| userEntry === "raiders")
-	{
-		userEntry = "[](/LV) Raiders";
-	}
-	else if (userEntry === "lac"
-	|| userEntry === "los angeles chargers"
-	|| userEntry === "san diego"
-	|| userEntry === "sd"
-	|| userEntry === "chargers")
-	{
-		userEntry = "[](/LAC) Chargers";
-	}
-	else if (userEntry === "den"
-	|| userEntry === "denver"
-	|| userEntry === "broncos")
-	{
-		userEntry = "[](/DEN) Broncos";
-	}
-	
-	//---------------------------NFC---------------------------
-	//NFC North
-	else if (userEntry === "gb"
-	|| userEntry === "green bay"
-	|| userEntry === "packers")
-	{
-		userEntry = "[](/GB) Packers";
-	}
-	else if (userEntry === "chi"
-	|| userEntry === "chicago"
-	|| userEntry === "bears")
-	{
-		userEntry = "[](/CHI) Bears";
-	}
-	else if (userEntry === "min"
-	|| userEntry === "minnesota"
-	|| userEntry === "vikings")
-	{
-		userEntry = "[](/MIN) Vikings";
-	}
-	else if (userEntry === "det"
-	|| userEntry === "detroit"
-	|| userEntry === "lions")
-	{
-		userEntry = "[](/DET) Lions";
-	}
-	
-	//NFC East
-	else if (userEntry === "phi"
-	|| userEntry === "philadelphia"
-	|| userEntry === "eagles")
-	{
-		userEntry = "[](/PHI) Eagles";
-	}
-	else if (userEntry === "dal"
-	|| userEntry === "dallas"
-	|| userEntry === "cowboys")
-	{
-		userEntry = "[](/DAL) Cowboys";
-	}
-	else if (userEntry === "was"
-	|| userEntry === "washington"
-	|| userEntry === "redskins")
-	{
-		userEntry = "[](/WAS) Redskins";
-	}
-	else if (userEntry === "nyg"
-	|| userEntry === "new york giants"
-	|| userEntry === "giants")
-	{
-		userEntry = "[](/NYG) Giants";
-	}
-	
-	//NFC South
-	else if (userEntry === "tb"
-	|| userEntry === "tampa bay"
-	|| userEntry === "buccaneers")
-	{
-		userEntry = "[](/TB) Buccaneers";
-	}
-	else if (userEntry === "car"
-	|| userEntry === "carolina"
-	|| userEntry === "panthers")
-	{
-		userEntry = "[](/CAR) Panthers";
-	}
-	else if (userEntry === "no"
-	|| userEntry === "new orleans"
-	|| userEntry === "saints")
-	{
-		userEntry = "[](/NO) Saints";
-	}
-	else if (userEntry === "atl"
-	|| userEntry === "atlanta"
-	|| userEntry === "falcons")
-	{
-		userEntry = "[](/ATL) Falcons";
-	}
-	
-	//NFC West
-	else if (userEntry === "ari"
-	|| userEntry === "arizona"
-	|| userEntry === "cardinals")
-	{
-		userEntry = "[](/ARI) Cardinals";
-	}
-	else if (userEntry === "sea"
-	|| userEntry === "seattle"
-	|| userEntry === "seahawks")
-	{
-		userEntry = "[](/SEA) Seahawks";
-	}
-	else if (userEntry === "lar"
-	|| userEntry === "los angeles rams"
-	|| userEntry === "rams")
-	{
-		userEntry = "[](/LAR) Rams";
-	}
-	else if (userEntry === "sf"
-	|| userEntry === "san francisco"
-	|| userEntry === "49ers")
-	{
-		userEntry = "[](/SF) 49ers";
-	}
-	else
-	{
-		userEntry = "invalid";
-	}
-	
-	return userEntry;
-}
+                    document.getElementById("gameNumber").innerHTML = gameNumber;
+                    document.getElementById("winnerOrLoser").innerHTML = "winner";
+                    document.getElementById("ofOrOn").innerHTML = "of";
+                    document.getElementById("outputField").value = currentTable;
+                    document.getElementById("inputField").size = 25;
 
-</script>
+                    //clear input field
+                    document.getElementById("inputField").value = "";
+                    return;
+                }
 
-<style>
-html {
-	background-color: #33cc33;
-}
-body {
-	font-family: Helvetica;
-	zoom: 120%;
-	background: linear-gradient(to bottom, #ffffff 0%, #33cc33 80%);
-	margin: 0;
-	padding: 0;
-	height: 100%;
-	width: 100%;
-	background-repeat:no-repeat;
-}
+                var formattedTeamName = getFormattedUsersTeamEntry();
+                if (formattedTeamName === "invalid")
+                {
+                    alert("Invalid team name! Enter either the NFL team's name, city, or city abbreviation. It is not case-sensitive.\nE.g.) \"Steelers\", \"Pittsburgh\", or \"PIT\"");
+                    return;
+                }
 
-h1 {
-	margin: 0;
-}
+                if (document.getElementById("winnerOrLoser").innerHTML === "winner")
+                {
+                    currentTable = currentTable + "\n" + formattedTeamName + " | over | ";
+                    document.getElementById("winnerOrLoser").innerHTML = "loser";
+                }
+                else if (!document.getElementById("commentCheckbox").checked && document.getElementById("winnerOrLoser").innerHTML === "loser")
+                {
+                    currentTable = currentTable + formattedTeamName;
+                    gameNumber = gameNumber + 1;
+                    document.getElementById("gameNumber").innerHTML = gameNumber;
+                    document.getElementById("winnerOrLoser").innerHTML = "winner";
+                    document.getElementById("outputField").value = currentTable;
+                    document.getElementById("inputField").size = 25;
+                }
+                else //if comments are enabled and inner html === loser
+                {
+                    currentTable = currentTable + formattedTeamName + " | ";
+                    document.getElementById("winnerOrLoser").innerHTML = "comments";
+                    document.getElementById("inputField").size = 80;
+                    document.getElementById("ofOrOn").innerHTML = "on";
+                }
+                //clear input field
+                document.getElementById("inputField").value = "";
+            }
 
-p{
-	display:inline;
-}
+            function getFormattedUsersTeamEntry()
+            {
+                var userEntry = document.getElementById("inputField").value;
+                userEntry = userEntry.toLowerCase();
 
-textarea#outputField {
-	resize: none;
-}
+                //---------------------------AFC---------------------------
 
-button {
-	width: 200px;
-	height: 40px;
-}
-</style>
-<title>NFL Table Maker</title>
-</head>
-<body>
-<center>
-<br>
-<h2>/r/NFL Predictions Thread Table Maker</h2>
-<p id="instructionText">Enter the </p>
-<p id="winnerOrLoser">winner</p>
-<p> </p>
-<p id =ofOrOn>of</p>
-<p> game </p>
-<p id="gameNumber">1</p>
-<p>:</p>
-<br>
-<br>
-<input id="inputField" onkeydown="keyPressedInTxtBox(event)">
-<br>
-<br>
-<input type="checkbox" id="commentCheckbox" onclick="confirmClearTable()">Comment on each game
-<h4>Your Table:</h4>
-<textarea id="outputField" rows="20" cols="50" readonly></textarea>
-<br>
-<br>
-<button id="clearTableButton" onclick="clearTableButtonClicked()">Clear Table</button>
-<button id="copyButton" onclick="copyOutputField()">Copy to Clipboard</button>
-</center>
-</body>
+                //AFC North
+                if (userEntry === "pit" 
+                    || userEntry === "pittsburgh"
+                    || userEntry === "steelers")
+                {
+                    userEntry = "[](/PIT) Steelers";
+                }
+                else if (userEntry === "bal"
+                    || userEntry === "baltimore"
+                    || userEntry === "ravens")
+                {
+                    userEntry = "[](/BAL) Ravens";
+                }
+                else if (userEntry === "cle"
+                    || userEntry === "cleveland"
+                    || userEntry === "browns")
+                {
+                    userEntry = "[](/CLE) Browns";
+                }
+                else if (userEntry === "cin"
+                    || userEntry === "cincinnati"
+                    || userEntry === "bengals")
+                {
+                    userEntry = "[](/CIN) Bengals";
+                }
+
+                //AFC East
+                else if (userEntry === "ne"
+                    || userEntry === "new england"
+                    || userEntry === "patriots")
+                {
+                    userEntry = "[](/NE) Patriots";
+                }
+                else if (userEntry === "mia"
+                    || userEntry === "miami"
+                    || userEntry === "dolphins")
+                {
+                    userEntry = "[](/MIA) Dolphins";
+                }
+                else if (userEntry === "nyj"
+                    || userEntry=== "new york jets"
+                    || userEntry=== "jets")
+                {
+                    userEntry = "[](/NYJ) Jets";
+                }
+                else if (userEntry === "buf"
+                    || userEntry === "buffalo"
+                    || userEntry === "bills")
+                {
+                    userEntry = "[](/BUF) Bills";
+                }
+
+                //AFC South
+                else if (userEntry === "hou"
+                    || userEntry === "houston"
+                    || userEntry === "texans")
+                {
+                    userEntry = "[](/HOU) Texans";
+                }
+                else if (userEntry === "ten"
+                    || userEntry === "tennessee"
+                    || userEntry === "titans")
+                {
+                    userEntry = "[](/TEN) Titans";
+                }
+                else if (userEntry === "jax"
+                    || userEntry === "jacksonville"
+                    || userEntry === "jaguars")
+                {
+                    userEntry = "[](/JAX) Jaguars";
+                }
+                else if (userEntry === "ind"
+                    || userEntry === "indianapolis"
+                    || userEntry === "colts")
+                {
+                    userEntry = "[](/IND) Colts";
+                }
+
+                //AFC West
+                else if (userEntry === "kc"
+                    || userEntry === "kansas city"
+                    || userEntry === "chiefs")
+                {
+                    userEntry = "[](/KC) Chiefs";
+                }
+                else if (userEntry === "oak"
+                    || userEntry === "oakland"
+                    || userEntry === "lv"
+                    || userEntry === "las vegas"
+                    || userEntry === "raiders")
+                {
+                    userEntry = "[](/LV) Raiders";
+                }
+                else if (userEntry === "lac"
+                    || userEntry === "los angeles chargers"
+                    || userEntry === "san diego"
+                    || userEntry === "sd"
+                    || userEntry === "chargers")
+                {
+                    userEntry = "[](/LAC) Chargers";
+                }
+                else if (userEntry === "den"
+                    || userEntry === "denver"
+                    || userEntry === "broncos")
+                {
+                    userEntry = "[](/DEN) Broncos";
+                }
+
+                //---------------------------NFC---------------------------
+                //NFC North
+                else if (userEntry === "gb"
+                    || userEntry === "green bay"
+                    || userEntry === "packers")
+                {
+                    userEntry = "[](/GB) Packers";
+                }
+                else if (userEntry === "chi"
+                    || userEntry === "chicago"
+                    || userEntry === "bears")
+                {
+                    userEntry = "[](/CHI) Bears";
+                }
+                else if (userEntry === "min"
+                    || userEntry === "minnesota"
+                    || userEntry === "vikings")
+                {
+                    userEntry = "[](/MIN) Vikings";
+                }
+                else if (userEntry === "det"
+                    || userEntry === "detroit"
+                    || userEntry === "lions")
+                {
+                    userEntry = "[](/DET) Lions";
+                }
+
+                //NFC East
+                else if (userEntry === "phi"
+                    || userEntry === "philadelphia"
+                    || userEntry === "eagles")
+                {
+                    userEntry = "[](/PHI) Eagles";
+                }
+                else if (userEntry === "dal"
+                    || userEntry === "dallas"
+                    || userEntry === "cowboys")
+                {
+                    userEntry = "[](/DAL) Cowboys";
+                }
+                else if (userEntry === "was"
+                    || userEntry === "washington"
+                    || userEntry === "redskins")
+                {
+                    userEntry = "[](/WAS) Redskins";
+                }
+                else if (userEntry === "nyg"
+                    || userEntry === "new york giants"
+                    || userEntry === "giants")
+                {
+                    userEntry = "[](/NYG) Giants";
+                }
+
+                //NFC South
+                else if (userEntry === "tb"
+                    || userEntry === "tampa bay"
+                    || userEntry === "buccaneers")
+                {
+                    userEntry = "[](/TB) Buccaneers";
+                }
+                else if (userEntry === "car"
+                    || userEntry === "carolina"
+                    || userEntry === "panthers")
+                {
+                    userEntry = "[](/CAR) Panthers";
+                }
+                else if (userEntry === "no"
+                    || userEntry === "new orleans"
+                    || userEntry === "saints")
+                {
+                    userEntry = "[](/NO) Saints";
+                }
+                else if (userEntry === "atl"
+                    || userEntry === "atlanta"
+                    || userEntry === "falcons")
+                {
+                    userEntry = "[](/ATL) Falcons";
+                }
+
+                //NFC West
+                else if (userEntry === "ari"
+                    || userEntry === "arizona"
+                    || userEntry === "cardinals")
+                {
+                    userEntry = "[](/ARI) Cardinals";
+                }
+                else if (userEntry === "sea"
+                    || userEntry === "seattle"
+                    || userEntry === "seahawks")
+                {
+                    userEntry = "[](/SEA) Seahawks";
+                }
+                else if (userEntry === "lar"
+                    || userEntry === "los angeles rams"
+                    || userEntry === "rams")
+                {
+                    userEntry = "[](/LAR) Rams";
+                }
+                else if (userEntry === "sf"
+                    || userEntry === "san francisco"
+                    || userEntry === "49ers")
+                {
+                    userEntry = "[](/SF) 49ers";
+                }
+                else
+                {
+                    userEntry = "invalid";
+                }
+
+                return userEntry;
+            }
+
+        </script>
+
+        <style>
+        html {
+            background-color: #33cc33;
+        }
+        body {
+            font-family: Helvetica;
+            zoom: 120%;
+            background: linear-gradient(to bottom, #ffffff 0%, #33cc33 80%);
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-repeat:no-repeat;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        p{
+            display:inline;
+        }
+
+        textarea#outputField {
+            resize: none;
+        }
+
+        button {
+            width: 200px;
+            height: 40px;
+        }
+        </style>
+        <title>NFL Table Maker</title>
+    </head>
+    <body>
+        <center>
+            <br>
+            <h2>/r/NFL Predictions Thread Table Maker</h2>
+            <p id="instructionText">Enter the </p>
+            <p id="winnerOrLoser">winner</p>
+            <p> </p>
+            <p id =ofOrOn>of</p>
+            <p> game </p>
+            <p id="gameNumber">1</p>
+            <p>:</p>
+            <br>
+            <br>
+            <input id="inputField" onkeydown="keyPressedInTxtBox(event)">
+            <br>
+            <br>
+            <input type="checkbox" id="commentCheckbox" onclick="confirmClearTable()">Comment on each game
+            <h4>Your Table:</h4>
+            <textarea id="outputField" rows="20" cols="50" readonly></textarea>
+            <br>
+            <br>
+            <button id="clearTableButton" onclick="clearTableButtonClicked()">Clear Table</button>
+            <button id="copyButton" onclick="copyOutputField()">Copy to Clipboard</button>
+        </center>
+    </body>
 </html>
